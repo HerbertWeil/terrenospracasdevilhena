@@ -47,7 +47,7 @@
         }
         .sidebar-header {
             padding: 16px 20px;
-            background: linear-gradient(135deg, #b91c1c 0%, #ef4444 100%);
+            background: linear-gradient(135deg, #0d47a1 0%, #1976d2 100%);
             color: white;
             display: flex;
             flex-direction: column;
@@ -71,8 +71,8 @@
         }
         .btn-export {
             flex: 1;
-            padding: 6px 10px;
-            font-size: 0.75rem;
+            padding: 8px 10px;
+            font-size: 0.8rem;
             font-weight: 600;
             border: none;
             border-radius: 4px;
@@ -83,7 +83,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
+            gap: 6px;
         }
         .btn-export:hover {
             background: rgba(255, 255, 255, 0.35);
@@ -108,7 +108,7 @@
         .stat-card .value {
             font-size: 1.1rem;
             font-weight: 800;
-            color: #dc2626;
+            color: #0d47a1;
         }
         .stat-card .label {
             font-size: 0.68rem;
@@ -136,6 +136,9 @@
             border-radius: 6px;
             font-size: 0.82rem;
             outline: none;
+        }
+        .search-box input:focus {
+            border-color: #1e88e5;
         }
         .search-box i {
             position: absolute;
@@ -172,8 +175,8 @@
             align-items: center;
         }
         .location-item:hover {
-            background-color: #fef2f2;
-            border-color: #fca5a5;
+            background-color: #eff6ff;
+            border-color: #bfdbfe;
         }
         .location-info {
             flex: 1;
@@ -190,7 +193,7 @@
             font-family: monospace;
         }
         .location-badge {
-            background-color: #ef4444;
+            background-color: #1e88e5;
             color: white;
             font-weight: 700;
             font-size: 0.8rem;
@@ -271,7 +274,7 @@
             border-radius: 50%;
         }
         input:checked + .slider {
-            background-color: #ef4444;
+            background-color: #1e88e5;
         }
         input:checked + .slider:before {
             transform: translateX(18px);
@@ -292,12 +295,12 @@
             gap: 6px;
         }
         .mode-btn.active {
-            background: #dc2626;
+            background: #0d47a1;
             color: white;
         }
 
-        /* RÓTULOS DAS BOLAS VERMELHAS */
-        .red-circle-label {
+        /* RÓTULOS DAS BOLAS AZUIS */
+        .blue-circle-label {
             color: #ffffff;
             font-weight: 800;
             text-align: center;
@@ -321,7 +324,7 @@
         }
 
         @media print {
-                    @page {
+            @page {
                 size: A4 portrait;
                 margin: 5mm; /* Margens mínimas para aproveitar a folha inteira */
             }
@@ -387,9 +390,8 @@
     <div id="sidebar">
         <div class="sidebar-header">
             <h1><i class="fa-solid fa-location-dot"></i> Mapeamento de Pontos</h1>
-            <p>Visualização de Coordenadas Geográficas</p>
+            <p>Levantamento feito em 9 de outubro de 2026</p>
             <div class="action-buttons">
-                <button class="btn-export" onclick="exportCSV()"><i class="fa-solid fa-file-csv"></i> Exportar CSV</button>
                 <button class="btn-export" onclick="window.print()"><i class="fa-solid fa-file-pdf"></i> Imprimir / PDF</button>
             </div>
         </div>
@@ -535,7 +537,7 @@
     setTimeout(() => map.invalidateSize(), 250);
     window.addEventListener('resize', () => map.invalidateSize());
 
-    // 4. Renderização do Mapa (Bolas Vermelhas Menores)
+    // 4. Renderização do Mapa (Bolas Azuis)
     const markersMap = {};
 
     function renderMapElements(filteredData) {
@@ -547,11 +549,11 @@
             filteredData.forEach(item => {
                 const radius = 8; // Tamanho reduzido
 
-                // Círculo Vermelho Menor
+                // Círculo Azul Menor
                 const circle = L.circleMarker([item.lat, item.lon], {
                     radius: radius,
-                    fillColor: "#EF4444",
-                    color: "#B91C1C",
+                    fillColor: "#1E88E5",
+                    color: "#0D47A1",
                     weight: 1.5,
                     opacity: 1,
                     fillOpacity: 0.9
@@ -564,7 +566,7 @@
                 `, { className: 'custom-tooltip', direction: 'top', offset: [0, -radius] });
 
                 circle.bindPopup(`
-                    <div style="font-weight:bold; color:#b91c1c; font-size:0.95rem; margin-bottom:4px;">${item.nome}</div>
+                    <div style="font-weight:bold; color:#0d47a1; font-size:0.95rem; margin-bottom:4px;">${item.nome}</div>
                     <div style="font-size:0.85rem;"><b>Latitude:</b> ${item.lat}</div>
                     <div style="font-size:0.85rem;"><b>Longitude:</b> ${item.lon}</div>
                 `);
@@ -573,7 +575,7 @@
 
                 // Número Ajustado para Bola Menor
                 const labelIcon = L.divIcon({
-                    html: `<div class="red-circle-label" style="font-size: 8px;">${item.id}</div>`,
+                    html: `<div class="blue-circle-label" style="font-size: 8px;">${item.id}</div>`,
                     className: '',
                     iconSize: [radius * 2, radius * 2],
                     iconAnchor: [radius, radius]
@@ -591,7 +593,7 @@
                 blur: 15,
                 maxZoom: 18,
                 max: 1.0,
-                gradient: { 0.2: 'yellow', 0.5: 'orange', 1.0: 'red' }
+                gradient: { 0.2: '#93c5fd', 0.5: '#3b82f6', 1.0: '#1d4ed8' }
             }).addTo(map);
         }
     }
@@ -656,7 +658,7 @@
             div.addEventListener('mouseleave', () => {
                 const markerObj = markersMap[item.id];
                 if (markerObj && mapMode === 'circles') {
-                    markerObj.circle.setStyle({ fillColor: '#EF4444', color: '#B91C1C', fillOpacity: 0.9 });
+                    markerObj.circle.setStyle({ fillColor: '#1E88E5', color: '#0D47A1', fillOpacity: 0.9 });
                     markerObj.circle.closeTooltip();
                 }
             });
@@ -674,25 +676,6 @@
 
     searchInput.addEventListener('input', renderListAndMap);
     sortSelect.addEventListener('change', renderListAndMap);
-
-    // 6. Exportação para CSV
-    function exportCSV() {
-        const filtered = getFilteredData();
-        let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "ID;Nome;Latitude;Longitude\n";
-
-        filtered.forEach(item => {
-            csvContent += `${item.id};"${item.nome}";${item.lat};${item.lon}\n`;
-        });
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "Coordenadas_Mapeadas.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
 
     // Inicialização da tela
     renderListAndMap();
