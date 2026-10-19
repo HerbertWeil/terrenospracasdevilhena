@@ -409,10 +409,7 @@
     });
 
     // Camadas Base de Satélite e Vetoriais
-    const esriStreet = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Esri World Street Map', maxZoom: 22
-    }).addTo(map);
-
+    
     // Satélite do Google (Alta nitidez em aproximações)
     const googleSatellite = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
         attribution: 'Google Maps Satélite',
@@ -425,17 +422,6 @@
         attribution: 'Google Maps Híbrido',
         maxNativeZoom: 20,
         maxZoom: 22
-    });
-
-    // Satélite Esri com zoom estendido
-    const esriSatellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Esri World Imagery',
-        maxNativeZoom: 17,
-        maxZoom: 22
-    });
-
-    const osmStandard = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors', maxZoom: 22
     });
 
     // Controle de Camadas no canto superior direito
