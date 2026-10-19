@@ -321,15 +321,37 @@
         }
 
         @media print {
-            #map-wrapper, .map-controls-bar, .controls, .action-buttons {
+           @media print {
+            @page {
+                size: A4 portrait; /* Força orientação Retrato */
+                margin: 8mm;
+            }
+            html, body {
+                overflow: visible !important;
+                height: auto !important;
+                background: white !important;
+            }
+            #map-wrapper, .map-controls-bar, .controls, .action-buttons, .stats-grid {
                 display: none !important;
             }
             #sidebar {
                 width: 100% !important;
+                height: auto !important;
                 box-shadow: none !important;
                 border: none !important;
+                /* Aplica a escala de 40% no conteúdo impresso */
+                transform: scale(0.40);
+                transform-origin: top left;
+                width: 250% !important; /* Compensa a redução para preencher a página */
             }
-            body { overflow: visible !important; }
+            .locations-list {
+                overflow: visible !important;
+                height: auto !important;
+            }
+            .location-item {
+                break-inside: avoid; /* Evita cortar o item no meio da página */
+                page-break-inside: avoid;
+            }
         }
 
         @media (max-width: 768px) {
