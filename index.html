@@ -214,18 +214,69 @@
             top: 0;
             left: 0;
         }
-        .map-mode-toggle {
+        
+        /* BARRA DE CONTROLES FLUTUANTE NO MAPA */
+        .map-controls-bar {
             position: absolute;
             top: 14px;
             right: 14px;
             z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+
+        .map-control-card {
             background: white;
             border-radius: 8px;
-            padding: 4px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            padding: 6px 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.25);
             display: flex;
-            gap: 4px;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #334155;
+            user-select: none;
         }
+
+        /* SWITCH TOGGLE (LIGA / DESLIGA) */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 38px;
+            height: 20px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 20px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #ef4444;
+        }
+        input:checked + .slider:before {
+            transform: translateX(18px);
+        }
+
         .mode-btn {
             padding: 6px 12px;
             font-size: 0.78rem;
@@ -258,7 +309,6 @@
             justify-content: center;
             width: 100%;
             height: 100%;
-            font-size: 11px;
         }
         .custom-tooltip {
             background: #0f172a !important;
@@ -271,7 +321,7 @@
         }
 
         @media print {
-            #map-wrapper, .map-mode-toggle, .controls, .action-buttons {
+            #map-wrapper, .map-controls-bar, .controls, .action-buttons {
                 display: none !important;
             }
             #sidebar {
@@ -316,8 +366,8 @@
                 <div class="label">Total de Pontos</div>
             </div>
             <div class="stat-card">
-                <div class="value">Bolas Vermelhas</div>
-                <div class="label">Estilo de Marcador</div>
+                <div class="value">Google Satélite</div>
+                <div class="label">Fonte do Mapa</div>
             </div>
         </div>
 
@@ -340,10 +390,23 @@
 
     <!-- ÁREA DO MAPA -->
     <div id="map-wrapper">
-        <div class="map-mode-toggle">
-            <button class="mode-btn active" id="btnModeCircles" onclick="setMapMode('circles')"><i class="fa-solid fa-circle-dot"></i> Marcadores</button>
-            <button class="mode-btn" id="btnModeHeat" onclick="setMapMode('heat')"><i class="fa-solid fa-fire"></i> Calor (Heatmap)</button>
+        <div class="map-controls-bar">
+            <!-- SELETOR TOGGLE MAPA LIMPO -->
+            <div class="map-control-card">
+                <span>Mapa Limpo</span>
+                <label class="switch">
+                    <input type="checkbox" id="cleanMapToggle" onchange="toggleCleanMap(this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- MODOS DE VISUALIZAÇÃO -->
+            <div style="background: white; border-radius: 8px; padding: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.25); display: flex; gap: 4px;">
+                <button class="mode-btn active" id="btnModeCircles" onclick="setMapMode('circles')"><i class="fa-solid fa-circle-dot"></i> Marcadores</button>
+                <button class="mode-btn" id="btnModeHeat" onclick="setMapMode('heat')"><i class="fa-solid fa-fire"></i> Calor (Heatmap)</button>
+            </div>
         </div>
+
         <div id="map"></div>
     </div>
 </div>
@@ -401,33 +464,36 @@
     let circleGroup = L.layerGroup();
     let labelGroup = L.layerGroup();
 
-    // 3. Inicialização do Mapa (Focado na média das coordenadas)
+    // 3. Inicialização do Mapa
     const map = L.map('map', {
         center: [-12.7555, -60.1318],
         zoom: 16,
         zoomControl: true
     });
 
-    // Camadas de Satélite do Google
-    const googleSatellite = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+    // EXCLUSIVAMENTE CAMADAS GOOGLE MAPS
+    const googleHybrid = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
         attribution: 'Google Maps',
         maxNativeZoom: 20,
         maxZoom: 22
-    }).addTo(map); // Define o "Mapa Limpo" como padrão inicial
+    }).addTo(map); // Inicia padrão com Nomes de Ruas
 
-    const googleHybrid = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+    const googleSatellite = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
         attribution: 'Google Maps',
         maxNativeZoom: 20,
         maxZoom: 22
     });
 
-    // Seletor simplificado no canto superior direito
-    L.control.layers({
-        "Mapa Limpo (Satélite)": googleSatellite,
-        "Mapa com Nomes de Ruas": googleHybrid
-    }, null, { collapsed: false }).addTo(map);
-     
-    }).addTo(map);
+    // Função do Seletor Toggle "Mapa Limpo"
+    function toggleCleanMap(isClean) {
+        if (isClean) {
+            map.removeLayer(googleHybrid);
+            map.addLayer(googleSatellite);
+        } else {
+            map.removeLayer(googleSatellite);
+            map.addLayer(googleHybrid);
+        }
+    }
 
     circleGroup.addTo(map);
     labelGroup.addTo(map);
@@ -435,7 +501,7 @@
     setTimeout(() => map.invalidateSize(), 250);
     window.addEventListener('resize', () => map.invalidateSize());
 
-    // 4. Renderização do Mapa (Bolas Vermelhas vs Heatmap)
+    // 4. Renderização do Mapa (Bolas Vermelhas Menores)
     const markersMap = {};
 
     function renderMapElements(filteredData) {
@@ -445,9 +511,9 @@
 
         if (mapMode === 'circles') {
             filteredData.forEach(item => {
-                const radius = 8;
+                const radius = 8; // Tamanho reduzido
 
-                // Círculo Vermelho Proporcional
+                // Círculo Vermelho Menor
                 const circle = L.circleMarker([item.lat, item.lon], {
                     radius: radius,
                     fillColor: "#EF4444",
@@ -471,7 +537,7 @@
 
                 circleGroup.addLayer(circle);
 
-                // Número do Ponto dentro da Bola Vermelha
+                // Número Ajustado para Bola Menor
                 const labelIcon = L.divIcon({
                     html: `<div class="red-circle-label" style="font-size: 8px;">${item.id}</div>`,
                     className: '',
