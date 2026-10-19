@@ -408,27 +408,24 @@
         zoomControl: true
     });
 
-    // Camadas Base de Satélite e Vetoriais
-    
-    // Satélite do Google (Alta nitidez em aproximações)
+    // Camadas de Satélite do Google
     const googleSatellite = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-        attribution: 'Google Maps Satélite',
+        attribution: 'Google Maps',
         maxNativeZoom: 20,
         maxZoom: 22
-    });
+    }).addTo(map); // Define o "Mapa Limpo" como padrão inicial
 
-    // Satélite do Google com nomes de ruas/híbrido
     const googleHybrid = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
-        attribution: 'Google Maps Híbrido',
+        attribution: 'Google Maps',
         maxNativeZoom: 20,
         maxZoom: 22
     });
 
-    // Controle de Camadas no canto superior direito
+    // Seletor simplificado no canto superior direito
     L.control.layers({
-     
-        "Satélite (Google Maps)": googleSatellite,
-        "Satélite Híbrido (Google + Ruas)": googleHybrid,
+        "Mapa Limpo (Satélite)": googleSatellite,
+        "Mapa com Nomes de Ruas": googleHybrid
+    }, null, { collapsed: false }).addTo(map);
      
     }).addTo(map);
 
