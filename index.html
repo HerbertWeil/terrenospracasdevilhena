@@ -322,7 +322,83 @@
             font-size: 0.82rem !important;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
         }
+        
+/* AJUSTES DE RESPONSIVIDADE PARA DISPOSITIVOS MÓVEIS */
+        @media (max-width: 768px) {
+            html, body {
+                overflow: auto !important; /* Permite rolagem suave se necessário */
+            }
 
+            #app-container {
+                flex-direction: column-reverse; /* Coloca o mapa no topo e o painel embaixo */
+                height: 100vh;
+                height: 100dvh; /* Garante altura perfeita nos navegadores mobile */
+            }
+
+            /* Ajuste do Mapa na Tela do Celular */
+            #map-wrapper {
+                height: 50vh;
+                width: 100%;
+                flex: none;
+            }
+
+            /* Ajuste da Barra de Controles sobre o Mapa */
+            .map-controls-bar {
+                top: 8px;
+                right: 8px;
+                left: 8px;
+                justify-content: space-between;
+                gap: 6px;
+            }
+
+            .map-control-card {
+                padding: 4px 8px;
+                font-size: 0.72rem;
+            }
+
+            .mode-btn {
+                padding: 5px 8px;
+                font-size: 0.72rem;
+            }
+
+            /* Ajuste do Painel Lateral para virar um Painel Inferior */
+            #sidebar {
+                width: 100%;
+                height: 50vh;
+                border-right: none;
+                border-top: 2px solid #cbd5e1;
+                box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
+            }
+
+            .sidebar-header {
+                padding: 12px 16px;
+            }
+
+            .sidebar-header h1 {
+                font-size: 1rem;
+            }
+
+            .stats-grid {
+                padding: 8px 10px;
+            }
+
+            .stat-card .value {
+                font-size: 0.95rem;
+            }
+
+            .controls {
+                padding: 8px 10px;
+            }
+
+            .locations-list {
+                padding: 6px 10px;
+            }
+
+            .location-item {
+                padding: 8px;
+            }
+        }
+        
         @media print {
             @page {
                 size: A4 portrait;
